@@ -1,5 +1,6 @@
 const express = require('express')
 const { setup } = require('radiks-server')
+const keys = require('./config/keys');
 
 /**
  * Registered via single app
@@ -11,6 +12,12 @@ const app = express()
 app.get('/', (req, res) => {
   res.send({ hi: 'there '})
 })
+
+setup({
+  mongoDBUrl: keys.mongoURI
+}).then((RadiksController) => {
+  app.use('/radiks', RadiksController);
+});
 
 const PORT = process.env.PORT || 5000;
 
