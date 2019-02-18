@@ -74,7 +74,7 @@ const migrate = async () => {
     }
     const op = {
       updateOne: {
-        filter: { 
+        filter: {
           _id: username,
         },
         update: {
