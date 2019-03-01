@@ -5,7 +5,8 @@ const { mongoURI } = require('../config/keys');
 const migrate = async () => {
   const dappsToUpdate = []
   const mongo = await getDB('mongodb://localhost:27017/radiks-server')
-  const dbDapp = await mongo.find({ radiksType: 'Dapp' })
+  const radiksCollection = mongo.collection('radiks-server-data')
+  const dbDapp = await radiksCollection.find({ radiksType: 'Dapp' })
   const dbDappToArray = await dbDapp.toArray()
 
   dbDappToArray.forEach((dapp) => {
@@ -17,7 +18,7 @@ const migrate = async () => {
   for (dapp of dappsToUpdate) {
     try {
       const { data } = await axios.get(`${dapp.url}/manifest.json`)
-      await mongo.update({
+      await radiksCollection.update({
         "url": dapp.url
       }, {
         $set: {
