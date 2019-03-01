@@ -4,7 +4,7 @@ const { mongoURI } = require('../config/keys');
 
 const migrate = async () => {
   const dappsToUpdate = []
-  const mongo = await getDB('mongodb://localhost:27017/radiks-server')
+  const mongo = await getDB(mongoURI)
   const radiksCollection = mongo.collection('radiks-server-data')
   const dbDapp = await radiksCollection.find({ radiksType: 'Dapp' })
   const dbDappToArray = await dbDapp.toArray()
