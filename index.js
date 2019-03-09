@@ -8,15 +8,14 @@ const keys = require('./config/keys');
 */
 const app = express()
 
-// Initial route
-app.get('/', (req, res) => {
-  res.send({ hi: 'there '})
-})
-
 setup({
   mongoDBUrl: keys.mongoURI
 }).then((RadiksController) => {
   app.use('/radiks', RadiksController);
+
+  app.get('/', (req, res) => {
+    res.send({ hi: 'there '})
+  })
 });
 
 const PORT = process.env.PORT || 5000;
