@@ -14,8 +14,9 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "blockstack": "19.0.0-beta.1",
     "express": "^4.16.4",
-    "radiks-server": "^0.1.8",
-    "blockstack": "19.0.0-beta.1"
+    "express-ws": "^4.0.0",
+    "radiks-server": "^0.1.8"
   }
 }
