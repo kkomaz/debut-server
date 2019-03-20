@@ -50,6 +50,22 @@ setup({
     ]).toArray()
     res.send({ users })
   })
+
+  app.put('/comment', async (req, res) => {
+    const shareId = req.query.share_id
+    const comments = await radiksData.find({ radiksType: 'Comment', share_id: shareId }).toArray()
+
+    if (comments.length === 0) {
+      res.status(404).send({ error: 'Not Found' })
+    } else {
+      radiksData.updateMany(
+        { radiksType: 'Comment', share_id: shareId },
+        { $set: { valid: false } }
+      )
+
+      res.json({ success: true })
+    }
+  })
 });
 
 const PORT = process.env.PORT || 5000;
