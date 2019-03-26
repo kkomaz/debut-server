@@ -5,6 +5,7 @@ const expressWS = require('express-ws');
 const { COLLECTION } = require('radiks-server/app/lib/constants');
 const fs = require('fs');
 const https = require('https');
+const aggregateShares = require('./utils/aggregators/aggregateShares');
 
 /**
  * Registered via single app
@@ -65,6 +66,11 @@ setup({
 
       res.json({ success: true })
     }
+  })
+
+  app.get('/shares', async (req, res) => {
+    let shares = await aggregateShares(radiksData, req.query)
+    res.json({ shares })
   })
 });
 
