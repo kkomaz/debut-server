@@ -4,16 +4,21 @@ const aggregateShares = async (radiksData, query) => {
   const match = {
     $match: {
       radiksType: 'Share',
-      valid: true
+      valid: true,
+      username: { "$in": query.username }
     }
   }
 
+  // if (query.username) {
+  //   match.$match.username = query.username;
+  // }
+
   if (query.username) {
-    match.$match.username = query.username;
+
   }
 
   const sort = {
-    $sort: { createdAt: -1 },
+    $sort: { createdAt: query.sort || -1 },
   }
 
   const parsedLimit = parseInt(query.limit)
@@ -37,7 +42,16 @@ const aggregateShares = async (radiksData, query) => {
     }
   }
 
-  const pipeline = [match, offset, sort, limit, commentsLookup]
+  const votesLookup = {
+    $lookup: {
+      from: COLLECTION,
+      localField: '_id',
+      foreignField: 'vote_share_id',
+      as: 'votes'
+    }
+  }
+
+  const pipeline = [match, offset, sort, limit, commentsLookup, votesLookup]
 
   const shares = await radiksData.aggregate(pipeline).toArray()
 
