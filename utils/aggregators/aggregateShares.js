@@ -40,11 +40,41 @@ const aggregateShares = async (radiksData, query) => {
     },
   }
 
+  // const commentsFilter = {
+  //   $project: {
+  //     id: "$_id",
+  //     radiksType: "$radiksType",
+  //     text: "text",
+  //     username: "$username",
+  //     imageFile: "$imageFile",
+  //     valid: "$valid",
+  //     createdAt: "$createdAt",
+  //     updatedAt: "$updatedAt",
+  //     signingKeyId: "$signingKeyId",
+  //     radiksSignature: "$radiksSignature",
+  //     commentCount: "$commentCount",
+  //     comments: {
+  //       $filter: {
+  //         input: '$comments',
+  //         as: 'comment',
+  //         cond: [
+  //           {
+  //             $and: [
+  //               { $eq: ["$$comment.radiksType", "Comment"]},
+  //               { $eq: ["$$comment.valid", true]}
+  //             ]
+  //           }
+  //         ]
+  //       }
+  //     }
+  //   }
+  // }
+
   const commentsFilter = {
     $project: {
       id: "$_id",
       radiksType: "$radiksType",
-      text: "text",
+      text: "$text",
       username: "$username",
       imageFile: "$imageFile",
       valid: "$valid",
@@ -57,7 +87,7 @@ const aggregateShares = async (radiksData, query) => {
         $filter: {
           input: '$comments',
           as: 'comment',
-          cond: { $eq: ["$$comment.valid", true ]}
+          cond: { $eq: ["$$comment.valid", true]},
         }
       }
     }
