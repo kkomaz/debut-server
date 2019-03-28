@@ -9,12 +9,16 @@ const aggregateShares = async (radiksData, query) => {
     }
   }
 
-  // if (query.username) {
-  //   match.$match.username = query.username;
-  // }
+  if (query.lt) {
+    match.$match.createdAt = {
+      $lt: parseInt(query.lt, 10),
+    };
+  }
 
-  if (query.username) {
-
+  if (query.gte) {
+    match.$match.createdAt = {
+      $gte: query.gte,
+    };
   }
 
   const sort = {
@@ -25,12 +29,6 @@ const aggregateShares = async (radiksData, query) => {
 
   const limit = {
     $limit: parsedLimit || 10,
-  }
-
-  const parsedOffset = parseInt(query.offset)
-
-  const offset = {
-    $skip: parsedOffset
   }
 
   const commentsLookup = {
@@ -51,7 +49,7 @@ const aggregateShares = async (radiksData, query) => {
     }
   }
 
-  const pipeline = [match, offset, sort, limit, commentsLookup, votesLookup]
+  const pipeline = [match, sort, limit, commentsLookup, votesLookup]
 
   const shares = await radiksData.aggregate(pipeline).toArray()
 
