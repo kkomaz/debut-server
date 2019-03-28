@@ -37,6 +37,29 @@ const aggregateShares = async (radiksData, query) => {
       localField: '_id',
       foreignField: 'share_id',
       as: 'comments'
+    },
+  }
+
+  const commentsFilter = {
+    $project: {
+      id: "$_id",
+      radiksType: "$radiksType",
+      text: "text",
+      username: "$username",
+      imageFile: "$imageFile",
+      valid: "$valid",
+      createdAt: "$createdAt",
+      updatedAt: "$updatedAt",
+      signingKeyId: "$signingKeyId",
+      radiksSignature: "$radiksSignature",
+      commentCount: "$commentCount",
+      comments: {
+        $filter: {
+          input: '$comments',
+          as: 'comment',
+          cond: { $eq: ["$$comment.valid", true ]}
+        }
+      }
     }
   }
 
@@ -49,7 +72,7 @@ const aggregateShares = async (radiksData, query) => {
     }
   }
 
-  const pipeline = [match, sort, limit, commentsLookup, votesLookup]
+  const pipeline = [match, sort, limit, commentsLookup, commentsFilter, votesLookup]
 
   const shares = await radiksData.aggregate(pipeline).toArray()
 
