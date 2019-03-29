@@ -31,46 +31,16 @@ const aggregateShares = async (radiksData, query) => {
     $limit: parsedLimit || 10,
   }
 
-  const commentsLookup = {
+  const childrenLookup = {
     $lookup: {
       from: COLLECTION,
       localField: '_id',
       foreignField: 'share_id',
-      as: 'comments'
+      as: 'children'
     },
   }
 
-  // const commentsFilter = {
-  //   $project: {
-  //     id: "$_id",
-  //     radiksType: "$radiksType",
-  //     text: "text",
-  //     username: "$username",
-  //     imageFile: "$imageFile",
-  //     valid: "$valid",
-  //     createdAt: "$createdAt",
-  //     updatedAt: "$updatedAt",
-  //     signingKeyId: "$signingKeyId",
-  //     radiksSignature: "$radiksSignature",
-  //     commentCount: "$commentCount",
-  //     comments: {
-  //       $filter: {
-  //         input: '$comments',
-  //         as: 'comment',
-  //         cond: [
-  //           {
-  //             $and: [
-  //               { $eq: ["$$comment.radiksType", "Comment"]},
-  //               { $eq: ["$$comment.valid", true]}
-  //             ]
-  //           }
-  //         ]
-  //       }
-  //     }
-  //   }
-  // }
-
-  const commentsFilter = {
+  const childrenFilter = {
     $project: {
       id: "$_id",
       radiksType: "$radiksType",
@@ -85,24 +55,31 @@ const aggregateShares = async (radiksData, query) => {
       commentCount: "$commentCount",
       comments: {
         $filter: {
-          input: '$comments',
+          input: '$children',
           as: 'comment',
-          cond: { $eq: ["$$comment.valid", true]},
+          cond: {
+            $and: [
+              { $eq: ["$$comment.valid", true] },
+              { $eq: ["$$comment.radiksType", 'Comment'] },
+            ]
+          }
+        }
+      },
+      votes: {
+        $filter: {
+          input: '$children',
+          as: 'vote',
+          cond: {
+            $and: [
+              { $eq: ["$$vote.radiksType", 'Vote'] },
+            ]
+          }
         }
       }
     }
   }
 
-  const votesLookup = {
-    $lookup: {
-      from: COLLECTION,
-      localField: '_id',
-      foreignField: 'vote_share_id',
-      as: 'votes'
-    }
-  }
-
-  const pipeline = [match, sort, limit, commentsLookup, commentsFilter, votesLookup]
+  const pipeline = [match, sort, limit, childrenLookup, childrenFilter]
 
   const shares = await radiksData.aggregate(pipeline).toArray()
 
