@@ -5,7 +5,7 @@ const { lookupProfile } = require('blockstack')
 
 const migrate = async () => {
   const mongo = await getDB(mongoURI)
-  const radiksCollection = mongo.collection('radiks-server-data')
+  const radiksCollection = mongo.collection('mongodb://heroku_hg3snx30:ktijof3rvfmfpq5frvsihge3fb@ds225375.mlab.com:25375/heroku_hg3snx30')
   const followers = await radiksCollection.find({ radiksType: 'Follow', $where: 'this.following.length >= 1'})
   const followersArray = await followers.toArray()
   const obj = {}

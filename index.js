@@ -6,6 +6,7 @@ const { COLLECTION } = require('radiks-server/app/lib/constants');
 const fs = require('fs');
 const https = require('https');
 const aggregateShares = require('./utils/aggregators/aggregateShares');
+const aggregateComments = require('./utils/aggregators/aggregateComments');
 
 /**
  * Registered via single app
@@ -71,6 +72,11 @@ setup({
   app.get('/shares', async (req, res) => {
     let shares = await aggregateShares(radiksData, req.query)
     res.json({ shares })
+  })
+
+  app.get('/comments', async (req, res) => {
+    let comments = await aggregateComments(radiksData, req.query)
+    res.json({ comments })
   })
 });
 
