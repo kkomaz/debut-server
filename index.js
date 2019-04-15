@@ -7,7 +7,7 @@ const fs = require('fs');
 const https = require('https');
 const aggregateShares = require('./utils/aggregators/aggregateShares');
 const aggregateComments = require('./utils/aggregators/aggregateComments');
-
+const aggregateMentions = require('./utils/aggregators/aggregateMentions');
 /**
  * Registered via single app
  * node index.js
@@ -77,6 +77,11 @@ setup({
   app.get('/comments', async (req, res) => {
     let comments = await aggregateComments(radiksData, req.query)
     res.json({ comments })
+  })
+
+  app.get('/mentions', async (req, res) => {
+    let mentions = await aggregateMentions(radiksData, req.query)
+    res.json({ mentions })
   })
 });
 
